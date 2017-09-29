@@ -23,8 +23,23 @@ function alexaRequestHandler(app, server) {
             socketHolder.on('ticketCreated', function () {
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
             });
+        } else if (intent === 'TurnACONIntend') {
+            socketHolder.emit('turnOnAc', {});
+
+            socketHolder.on('turnOnAc', function () {
+                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You";
+                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+            });
+        } else if (intent === 'TurnACOFFIntend') {
+            socketHolder.emit('turnOffAc', {});
+
+            socketHolder.on('turnOffAc', function () {
+                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC off you";
+
+                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+            });
         } else {
-            INTENT_RESPONSE.response.outputSpeech.text = 'Hello There';
+            INTENT_RESPONSE.response.outputSpeech.text = 'Hi There';
             res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
         }
     });
