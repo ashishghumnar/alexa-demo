@@ -28,12 +28,15 @@ function alexaRequestHandler(app, server) {
 
             socketHolder.on('turnOnAc', function () {
                 INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You";
+                console.log('in on turnOffAc');
+
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
             });
         } else if (intent === 'TurnACOFFIntend') {
             socketHolder.emit('turnOffAc', {});
 
             socketHolder.on('turnOffAc', function () {
+                console.log('in on turnOffAc');
                 INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC for you";
 
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
@@ -46,7 +49,7 @@ function alexaRequestHandler(app, server) {
 }
 
 function getIntend(request) {
-    return request.intent.name;
+    return request.intent.name || '';
 }
 
 module.exports = alexaRequestHandler;
