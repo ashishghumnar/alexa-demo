@@ -39,7 +39,7 @@ function alexaRequestHandler(app, server) {
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
             });
         } else {
-            INTENT_RESPONSE.response.outputSpeech.text = 'Hi There';
+            INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Thank You';
             res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
         }
     });
