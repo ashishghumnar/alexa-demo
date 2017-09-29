@@ -34,7 +34,7 @@ function alexaRequestHandler(app, server) {
             socketHolder.emit('turnOffAc', {});
 
             socketHolder.on('turnOffAc', function () {
-                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC off you";
+                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC for you";
 
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
             });
