@@ -10,23 +10,24 @@ function getNews(req, res) {
         url: 'https://newsapi.org/v1/articles?source=the-hindu&sortBy=top&apiKey=81c60706fcf9403c98adf6fdee1ae8c6'
     };
     var body = '';
+    if (req.headers.signaturecertchainurl && req.headers.signature) {
+        https.get(options.url, function (newsResponce) {
+            newsResponce.on('data', function (d) {
+                body += d;
+            });
 
-    https.get(options.url, function (newsResponce) {
-        newsResponce.on('data', function (d) {
-            body += d;
+            newsResponce.on('end', function () {
+                try {
+                    intent_responce.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = filterResponse(JSON.parse(body));
+                    res.send(intent_responce.SIMPLE_JSON_RESPONSE);
+                } catch (err) {
+                    console.log(err);
+                }
+            });
+
+        }).on('error', function (e) {
         });
-
-        newsResponce.on('end', function () {
-            try {
-                intent_responce.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = filterResponse(JSON.parse(body));
-                res.send(intent_responce.SIMPLE_JSON_RESPONSE);
-            } catch (err) {
-                console.log(err);
-            }
-        });
-
-    }).on('error', function (e) {
-    });
+    }
 }
 
 function filterResponse(res) {
