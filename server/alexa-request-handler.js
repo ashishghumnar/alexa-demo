@@ -48,8 +48,11 @@ function alexaRequestHandler(app, server) {
                     console.log(err);
                 }
             });
+        } else if (intent === 'DeviceNotWorking') {
+            res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+        } else if (intent === 'ListCriticalEvents') {
+            res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
         } else {
-            INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Thank You';
             res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
         }
     });
