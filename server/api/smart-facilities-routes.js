@@ -29,7 +29,6 @@ function intentRequestHandler(req, res) {
 
         socketHolder.on('turnOnAc', function () {
             INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You";
-            console.log('in on turnOffAc');
 
             try {
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
@@ -52,18 +51,19 @@ function intentRequestHandler(req, res) {
     } else if (intent === 'DeviceNotWorking') {
         res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
     } else if (intent === 'ListCriticalEvents') {
-
         socketHolder.emit('getCriticalEvents', {});
 
         socketHolder.on('criticalEvents', function (eventList) {
-            INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.response.outputSpeech.text = eventList;
+            INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.dialog_one.response.outputSpeech.text = eventList;
             INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.dialog_one.response.reprompt.outputSpeech.text = 'Do you want me to take some actions?';
+
             try {
-                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+                res.send(INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE);
             } catch (err) {
                 console.log(err);
             }
         });
+
     } else {
         res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
     }
