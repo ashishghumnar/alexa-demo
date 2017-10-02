@@ -14,8 +14,8 @@ function setSocket(socket) {
 }
 
 function intentRequestHandler(req, res) {
-    const intent = req.body.request ? getIntend(req.body.request) : '',
-        slots = req.body.request.slots || {};
+    const intent = req.body.request ? getIntend(req.body.request) : '';
+
 
     if (intent === 'CreateTicketIntend') {
         INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Let me create ticket for you';
@@ -30,6 +30,7 @@ function intentRequestHandler(req, res) {
 
         socketHolder.on('turnOnAc', function () {
             try {
+                var slots = req.body.request.intent.slots || {};
                 var confRoom = slots.confRoom.value ? ' from ' + slots.confRoom.value : '';
 
                 INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You" + confRoom;
@@ -43,6 +44,7 @@ function intentRequestHandler(req, res) {
         socketHolder.emit('turnOffAc', {});
 
         socketHolder.on('turnOffAc', function () {
+            var slots = req.body.request.intent.slots || {};
             var confRoom = slots.confRoom.value ? 'from ' + slots.confRoom.value : '';
 
             INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC for you" + confRoom;
