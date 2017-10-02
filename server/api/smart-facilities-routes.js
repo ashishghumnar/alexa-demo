@@ -58,7 +58,7 @@ function intentRequestHandler(req, res) {
             INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.dialog_one.response.reprompt.outputSpeech.text = 'Do you want me to take some actions?';
 
             try {
-                res.send(INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE);
+                res.send(INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.dialog_one);
             } catch (err) {
                 console.log(err);
             }
