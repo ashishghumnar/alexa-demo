@@ -29,11 +29,11 @@ function intentRequestHandler(req, res) {
         socketHolder.emit('turnOnAc', {});
 
         socketHolder.on('turnOnAc', function () {
-            var confRoom = slots.confRoom.value ? ' from ' + slots.confRoom.value : '';
-
-            INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You" + confRoom;
-
             try {
+                var confRoom = slots.confRoom.value ? ' from ' + slots.confRoom.value : '';
+
+                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You" + confRoom;
+
                 res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
             } catch (err) {
                 console.log(err);
