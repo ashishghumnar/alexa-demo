@@ -3,9 +3,15 @@
  */
 INTENT_RESPONSE = require('./../intent-response-constant');
 
+var socketHolder = null;
+
 function getIntend(request) {
     return request.intent.name || '';
 }
+
+exports.setSocket = function (socket) {
+    socketHolder = socket;
+};
 
 module.exports = function (req, res) {
     const intent = req.body.request ? getIntend(req.body.request) : '';
