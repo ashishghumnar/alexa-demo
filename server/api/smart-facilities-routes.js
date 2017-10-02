@@ -9,7 +9,7 @@ function getIntend(request) {
     return request.intent.name || '';
 }
 
-function  setSocket(socket) {
+function setSocket(socket) {
     socketHolder = socket;
 }
 
@@ -52,7 +52,18 @@ function intentRequestHandler(req, res) {
     } else if (intent === 'DeviceNotWorking') {
         res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
     } else if (intent === 'ListCriticalEvents') {
-        res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+
+        socketHolder.emit('getCriticalEvents', {});
+
+        socketHolder.on('criticalEvents', function (eventList) {
+            INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.response.outputSpeech.text = eventList;
+            INTENT_RESPONSE.JSON_RESPONSE_FOR_DEVIECE.dialog_one.response.reprompt.outputSpeech.text = 'Do you want me to take some actions?';
+            try {
+                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+            } catch (err) {
+                console.log(err);
+            }
+        });
     } else {
         res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
     }
