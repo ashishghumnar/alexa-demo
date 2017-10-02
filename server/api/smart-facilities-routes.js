@@ -9,11 +9,11 @@ function getIntend(request) {
     return request.intent.name || '';
 }
 
-exports.setSocket = function (socket) {
+function  setSocket(socket) {
     socketHolder = socket;
-};
+}
 
-module.exports = function (req, res) {
+function intentRequestHandler(req, res) {
     const intent = req.body.request ? getIntend(req.body.request) : '';
 
     if (intent === 'CreateTicketIntend') {
@@ -56,4 +56,9 @@ module.exports = function (req, res) {
     } else {
         res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
     }
+}
+
+module.exports = {
+    intentRequestHandler: intentRequestHandler,
+    setSocket: setSocket
 };

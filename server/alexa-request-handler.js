@@ -11,7 +11,7 @@ function alexaRequestHandler(app, server) {
             smart_facilities.setSocket(socket);
         });
 
-    app.post('/api.echo', smart_facilities);
+    app.post('/api.echo', smart_facilities.intentRequestHandler);
     app.post('/api.echo/news', news_skill_routes);
 }
 
