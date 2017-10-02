@@ -10,6 +10,7 @@ function getNews(req, res) {
         url: 'https://newsapi.org/v1/articles?source=the-hindu&sortBy=top&apiKey=81c60706fcf9403c98adf6fdee1ae8c6'
     };
     var body = '';
+
     if (req.headers.signaturecertchainurl && req.headers.signature) {
         https.get(options.url, function (newsResponce) {
             newsResponce.on('data', function (d) {
