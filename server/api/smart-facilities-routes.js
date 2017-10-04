@@ -16,7 +16,6 @@ function setSocket(socket) {
 function intentRequestHandler(req, res) {
     const intent = req.body.request ? getIntend(req.body.request) : '';
 
-
     if (intent === 'CreateTicketIntend') {
         INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Let me create ticket for you';
 
