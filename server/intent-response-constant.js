@@ -33,5 +33,63 @@ module.exports = {
                 "shouldEndSession": false
             }
         }
+    },
+
+    DIALOG_MESSAGE_RESPONSE: {
+        "version": "1.0",
+        "response": {
+            "shouldEndSession": false,
+            "directives": [
+                {
+                    "type": "Dialog.ElicitSlot",
+                    "updatedIntent": {
+                        "name": "actionOnEvents",
+                        "confirmationStatus": "NONE",
+                        "slots": {
+                            "AcActions": {
+                                "name": "AcActions",
+                                "confirmationStatus": "NONE"
+                            },
+                            "confrenceRoom": {
+                                "name": "confrenceRoom",
+                                "confirmationStatus": "NONE"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+
+    test: {
+        "version": "1.0",
+        "sessionAttributes": {},
+        "response": {
+            "outputSpeech": {
+                "type": "PlainText",
+                "text": "what action do you want to perform ?"
+            },
+            "shouldEndSession": false,
+            "directives": [
+                {
+                    "type": "Dialog.ElicitSlot",
+                    "slotToElicit": "AcActions",
+                    "updatedIntent": {
+                        "name": "actionOnEvents",
+                        "confirmationStatus": "NONE",
+                        "slots": {
+                            "AcActions": {
+                                "name": "AcActions",
+                                "confirmationStatus": "NONE"
+                            },
+                            "confrenceRoom": {
+                                "name": "confrenceRoom",
+                                "confirmationStatus": "NONE"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
     }
 };

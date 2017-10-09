@@ -6,7 +6,7 @@ INTENT_RESPONSE = require('./../intent-response-constant');
 var socketHolder = null;
 
 function getIntend(request) {
-    return request.intent.name || '';
+    return request && request.intent && request.intent.name ? request.intent.name : '';
 }
 
 function setSocket(socket) {
@@ -53,9 +53,41 @@ function intentRequestHandler(req, res) {
                 console.log(err);
             }
         });
-    } else if (intent === 'DeviceNotWorking') {
-        res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
-    } else if (intent === 'ListCriticalEvents') {
+    } else if (intent === 'actionOnEvents') {
+        if (req.body.request.dialogState === 'IN_PROGRESS') {
+            var intentSolts = req.body.request.intent.slots;
+
+            if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
+                var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+                RESPONSE_FINAL.response.outputSpeech.text = "I have turn on AC for you";
+                res.send(RESPONSE_FINAL);
+            }
+
+            if (intentSolts.confrenceRoom.value) {
+                var RESPONSE = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
+
+                RESPONSE.response.directives[0].type = 'Dialog.ConfirmIntent';
+                RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + intentSolts.confrenceRoom.value + " ?";
+
+                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
+                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
+                RESPONSE.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
+
+                res.send(RESPONSE);
+            } else if (intentSolts.AcActions.value) {
+                var RESPONSE_CONF_ROOM = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
+
+                RESPONSE_CONF_ROOM.response.directives[0].slotToElicit = 'confrenceRoom';
+                RESPONSE_CONF_ROOM.response.outputSpeech.text = "from which conference Room?";
+
+                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
+                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
+                res.send(RESPONSE_CONF_ROOM);
+            }
+        } else {
+            res.send(INTENT_RESPONSE.test);
+        }
+    } else if (intent === 'ListEvents') {
         socketHolder.emit('getCriticalEvents', {});
 
         socketHolder.on('criticalEvents', function (eventList) {
