@@ -69,7 +69,7 @@ function intentRequestHandler(req, res) {
                 });
 
                 var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
-                RESPONSE_FINAL.response.outputSpeech.text = "I will turn on AC for you";
+                RESPONSE_FINAL.response.outputSpeech.text = "I will " + intentSolts.AcActions.value + " for you " + intentSolts.confrenceRoom.value + "." ;
                 res.send(RESPONSE_FINAL);
             } else {
                 if (intentSolts.confrenceRoom.value) {
