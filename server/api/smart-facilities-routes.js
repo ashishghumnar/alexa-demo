@@ -69,28 +69,28 @@ function intentRequestHandler(req, res) {
                         console.log(err);
                     }
                 });
-            }
+            } else {
+                if (intentSolts.confrenceRoom.value) {
+                    var RESPONSE = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
 
-            if (intentSolts.confrenceRoom.value) {
-                var RESPONSE = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
+                    RESPONSE.response.directives[0].type = 'Dialog.ConfirmIntent';
+                    RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + " " + intentSolts.confrenceRoom.value + " ?";
 
-                RESPONSE.response.directives[0].type = 'Dialog.ConfirmIntent';
-                RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + " " + intentSolts.confrenceRoom.value + " ?";
+                    RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
+                    RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
+                    RESPONSE.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
 
-                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
-                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
-                RESPONSE.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
+                    res.send(RESPONSE);
+                } else if (intentSolts.AcActions.value) {
+                    var RESPONSE_CONF_ROOM = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
 
-                res.send(RESPONSE);
-            } else if (intentSolts.AcActions.value) {
-                var RESPONSE_CONF_ROOM = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
+                    RESPONSE_CONF_ROOM.response.directives[0].slotToElicit = 'confrenceRoom';
+                    RESPONSE_CONF_ROOM.response.outputSpeech.text = "from which conference Room?";
 
-                RESPONSE_CONF_ROOM.response.directives[0].slotToElicit = 'confrenceRoom';
-                RESPONSE_CONF_ROOM.response.outputSpeech.text = "from which conference Room?";
-
-                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
-                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
-                res.send(RESPONSE_CONF_ROOM);
+                    RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
+                    RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
+                    res.send(RESPONSE_CONF_ROOM);
+                }
             }
         } else {
             res.send(INTENT_RESPONSE.test);
