@@ -80,6 +80,7 @@ function intentRequestHandler(req, res) {
                 RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
                 RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
                 RESPONSE.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
+                RESPONSE.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
 
                 res.send(RESPONSE);
             } else if (intentSolts.AcActions.value) {
