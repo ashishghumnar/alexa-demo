@@ -58,16 +58,24 @@ function intentRequestHandler(req, res) {
             var intentSolts = req.body.request.intent.slots;
 
             if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
-                var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
-                RESPONSE_FINAL.response.outputSpeech.text = "I have turn on AC for you";
-                res.send(RESPONSE_FINAL);
+                socketHolder.emit('turnOnAc', {});
+
+                socketHolder.on('turnOnAc', function () {
+                    try {
+                        var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+                        RESPONSE_FINAL.response.outputSpeech.text = "I have turn on AC for you";
+                        res.send(RESPONSE_FINAL);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                });
             }
 
             if (intentSolts.confrenceRoom.value) {
                 var RESPONSE = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
 
                 RESPONSE.response.directives[0].type = 'Dialog.ConfirmIntent';
-                RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + intentSolts.confrenceRoom.value + " ?";
+                RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + " " + intentSolts.confrenceRoom.value + " ?";
 
                 RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
                 RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
