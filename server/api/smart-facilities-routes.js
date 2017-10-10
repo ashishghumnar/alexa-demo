@@ -22,7 +22,7 @@ function intentRequestHandler(req, res) {
     if (isLaunchRequest) {
         var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
 
-        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To SmartFacilities, How can help you ?';
+        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To Smart Office, How can help you ?';
 
         RESPONSE_LAUNCH_REQ.response.reprompt = {
             "outputSpeech": {
