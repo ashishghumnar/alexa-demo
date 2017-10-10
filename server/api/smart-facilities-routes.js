@@ -23,7 +23,16 @@ function intentRequestHandler(req, res) {
         var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
 
         RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To SmartFacilities, How can help you ?';
-        RESPONSE_LAUNCH_REQ.shouldEndSession = false;
+
+        RESPONSE_LAUNCH_REQ.response.reprompt = {
+            "outputSpeech": {
+                "type": "PlainText",
+                    "text": "Can I help you with anything else?"
+            }
+        };
+
+        RESPONSE_LAUNCH_REQ.response.shouldEndSession = false;
+
         try {
             res.send(RESPONSE_LAUNCH_REQ);
         } catch (err) {
@@ -33,7 +42,7 @@ function intentRequestHandler(req, res) {
         var RESPONSE_REQ_END = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
 
         RESPONSE_REQ_END.response.outputSpeech.text = 'Thank You..!';
-        RESPONSE_REQ_END.shouldEndSession = true;
+        RESPONSE_REQ_END.response.shouldEndSession = true;
 
         try {
             res.send(RESPONSE_REQ_END);
@@ -48,6 +57,15 @@ function intentRequestHandler(req, res) {
 
         if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
             var DeviceNotWorking_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+
+            DeviceNotWorking_FINAL.response.reprompt = {
+                outputSpeech: {
+                    "type": "PlainText",
+                    "text": "Can I help you with anything else?"
+                }
+            };
+
+            DeviceNotWorking_FINAL.response.shouldEndSession = false;
 
             DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " +
                 deviceNotWorkingIntentSlots.device.value + " " + deviceNotWorkingIntentSlots.floor.value +
@@ -86,51 +104,46 @@ function intentRequestHandler(req, res) {
         } catch (err) {
             console.log(err);
         }
-    } else if (intent === 'TurnACONIntend') {
-        socketHolder.emit('turnOnAc', {});
-
-        socketHolder.on('turnOnAc', function () {
-            try {
-                var slots = req.body.request.intent.slots || {};
-                var confRoom = slots.confRoom.value ? ' from ' + slots.confRoom.value : '';
-
-                INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "I have Turn On Ac For You" + confRoom;
-
-                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
-            } catch (err) {
-                console.log(err);
-            }
-        });
-    } else if (intent === 'TurnACOFFIntend') {
-        socketHolder.emit('turnOffAc', {});
-
-        socketHolder.on('turnOffAc', function () {
-            var slots = req.body.request.intent.slots || {};
-            var confRoom = slots.confRoom.value ? 'from ' + slots.confRoom.value : '';
-
-            INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = "Hey, I have turn off AC for you" + confRoom;
-            try {
-                res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
-            } catch (err) {
-                console.log(err);
-            }
-        });
     } else if (intent === 'ActionOnEventIntent') {
         var intentSolts = req.body.request.intent.slots;
 
         if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
-            socketHolder.emit('turnOnAc', {});
+            var actionOnEvent = {
+                action: ''
+            };
+            if (/off/.test(intentSolts.actionOnDevice.value)) {
+                actionOnEvent.action = 'off';
 
-            socketHolder.on('turnOnAc', function () {
-                try {
-                    console.log('turn on');
-                } catch (err) {
-                    console.log(err);
-                }
-            });
+                socketHolder.emit('turnOffAc', {});
+                socketHolder.on('turnOffAc', function () {
+                    console.log('turn off ac');
+                });
+            } else if (/on/.test(intentSolts.actionOnDevice.value)) {
+                actionOnEvent.action = 'on';
+
+                socketHolder.emit('turnOnAc', {});
+                socketHolder.on('turnOnAc', function () {
+                    console.log('turn on ac');
+                });
+            }
+
+            actionOnEvent.device = intentSolts.device.value;
+            actionOnEvent.deviceLocation = intentSolts.confrenceRoom.value;
+
+            console.log('%s %s', intentSolts.device.value, intentSolts.confrenceRoom.value);
 
             var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
-            RESPONSE_FINAL.response.outputSpeech.text = "I will " + intentSolts.actionOnDevice.value + " " + intentSolts.device.value + " for you from" + intentSolts.confrenceRoom.value + ".";
+            RESPONSE_FINAL.response.outputSpeech.text = "I will " +
+                intentSolts.actionOnDevice.value + " " + intentSolts.device.value + " for you from" +
+                intentSolts.confrenceRoom.value + ".";
+
+            RESPONSE_FINAL.response.reprompt = {
+                outputSpeech: {
+                    "type": "PlainText",
+                    "text": "Can I help you with anything else?"
+                }
+            };
+            RESPONSE_FINAL.response.shouldEndSession = false;
 
             try {
                 res.send(RESPONSE_FINAL);
@@ -180,6 +193,16 @@ function intentRequestHandler(req, res) {
                 console.log(err);
             }
         });
+    } else if (intent === 'AcknowledgeIntent') {
+        var RESPONSE_AcknowledgeIntent = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+
+        RESPONSE_AcknowledgeIntent.response.outputSpeech.text = 'You are Welcome..!';
+        RESPONSE_AcknowledgeIntent.shouldEndSession = true;
+
+        try {
+            res.send(RESPONSE_AcknowledgeIntent);
+        } catch (err) {
+        }
     } else {
         try {
             res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
