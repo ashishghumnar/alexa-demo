@@ -27,7 +27,7 @@ function intentRequestHandler(req, res) {
         RESPONSE_LAUNCH_REQ.response.reprompt = {
             "outputSpeech": {
                 "type": "PlainText",
-                    "text": "Can I help you with anything else?"
+                "text": "Can I help you with anything else?"
             }
         };
 
@@ -143,6 +143,7 @@ function intentRequestHandler(req, res) {
                     "text": "Can I help you with anything else?"
                 }
             };
+
             RESPONSE_FINAL.response.shouldEndSession = false;
 
             try {
