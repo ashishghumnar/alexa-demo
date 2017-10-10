@@ -21,26 +21,71 @@ function intentRequestHandler(req, res) {
 
     if (isLaunchRequest) {
         var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+
         RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To SmartFacilities, How can help you ?';
         RESPONSE_LAUNCH_REQ.shouldEndSession = false;
+        try {
+            res.send(RESPONSE_LAUNCH_REQ);
+        } catch (err) {
 
-        res.send(RESPONSE_LAUNCH_REQ);
+        }
     } else if (isSessionEndedRequest) {
-        var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
-        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Thank You..!';
-        RESPONSE_LAUNCH_REQ.shouldEndSession = true;
+        var RESPONSE_REQ_END = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
 
-        res.send(RESPONSE_LAUNCH_REQ);
+        RESPONSE_REQ_END.response.outputSpeech.text = 'Thank You..!';
+        RESPONSE_REQ_END.shouldEndSession = true;
+
+        try {
+            res.send(RESPONSE_REQ_END);
+        } catch (err) {
+
+        }
     }
 
-    if (intent === 'CreateTicketIntend') {
-        INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Let me create ticket for you';
+    if (intent === 'DeviceNotWorking') {
+        var DEVICE_NOT_WORKING_RESP = JSON.parse(JSON.stringify(INTENT_RESPONSE.DelegateDeviceNotWorking)),
+            deviceNotWorkingIntentSlots = req.body.request.intent.slots;
+
+        if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
+            var DeviceNotWorking_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+
+            DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " +
+                deviceNotWorkingIntentSlots.device.value + " " + deviceNotWorkingIntentSlots.floor.value +
+                deviceNotWorkingIntentSlots.floorSide.value;
+
+            try {
+                res.send(DeviceNotWorking_FINAL);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        if (deviceNotWorkingIntentSlots.device.value) {
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.device.value = deviceNotWorkingIntentSlots.device.value;
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.device.confirmationStatus = 'CONFIRMED';
+        }
+
+        if (deviceNotWorkingIntentSlots.floor.value) {
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.floor.value = deviceNotWorkingIntentSlots.floor.value;
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.floor.confirmationStatus = 'CONFIRMED';
+        }
+
+        if (deviceNotWorkingIntentSlots.floorSide.value) {
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.floorSide.value = deviceNotWorkingIntentSlots.floorSide.value;
+            DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.floorSide.confirmationStatus = 'CONFIRMED';
+        }
 
         socketHolder.emit('createTicket', {data: ''});
 
         socketHolder.on('ticketCreated', function () {
-            res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+
         });
+
+        try {
+            res.send(DEVICE_NOT_WORKING_RESP);
+        } catch (err) {
+            console.log(err);
+        }
     } else if (intent === 'TurnACONIntend') {
         socketHolder.emit('turnOnAc', {});
 
@@ -86,7 +131,12 @@ function intentRequestHandler(req, res) {
 
             var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
             RESPONSE_FINAL.response.outputSpeech.text = "I will " + intentSolts.actionOnDevice.value + " " + intentSolts.device.value + " for you from" + intentSolts.confrenceRoom.value + ".";
-            res.send(RESPONSE_FINAL);
+
+            try {
+                res.send(RESPONSE_FINAL);
+            } catch (err) {
+                console.log(err);
+            }
         } else {
             var RESPONSE_DELEGATE_DEVICE = JSON.parse(JSON.stringify(INTENT_RESPONSE.delegate));
             if (intentSolts.actionOnDevice.value) {
@@ -131,7 +181,11 @@ function intentRequestHandler(req, res) {
             }
         });
     } else {
-        res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+        try {
+            res.send(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE);
+        } catch (err) {
+
+        }
     }
 }
 

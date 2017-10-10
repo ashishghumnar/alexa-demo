@@ -61,41 +61,6 @@ module.exports = {
         }
     },
 
-    test: {
-        "version": "1.0",
-        "sessionAttributes": {},
-        "response": {
-            "outputSpeech": {
-                "type": "PlainText",
-                "text": "what action do you want to perform ?"
-            },
-            "shouldEndSession": false,
-            "directives": [
-                {
-                    "type": "Dialog.ElicitSlot",
-                    "slotToElicit": "actionOnDevice",
-                    "updatedIntent": {
-                        "name": "ActionOnEventIntent",
-                        "confirmationStatus": "NONE",
-                        "slots": {
-                            "actionOnDevice": {
-                                "name": "actionOnDevice",
-                                "confirmationStatus": "NONE"
-                            },
-                            "confrenceRoom": {
-                                "name": "confrenceRoom",
-                                "confirmationStatus": "NONE"
-                            },
-                            "device": {
-                                "name": "device",
-                                "confirmationStatus": "NONE"
-                            }
-                        }
-                    }
-                }
-            ]
-        }
-    },
     delegate:  {
         "version": "1.0",
         "sessionAttributes": {},
@@ -118,6 +83,37 @@ module.exports = {
                             },
                             "device": {
                                 "name": "device",
+                                "confirmationStatus": "NONE"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+
+    DelegateDeviceNotWorking:  {
+        "version": "1.0",
+        "sessionAttributes": {},
+        "response": {
+            "shouldEndSession": false,
+            "directives": [
+                {
+                    "type": "Dialog.Delegate",
+                    "updatedIntent": {
+                        "name": "DeviceNotWorking",
+                        "confirmationStatus": "NONE",
+                        "slots": {
+                            "device": {
+                                "name": "device",
+                                "confirmationStatus": "NONE"
+                            },
+                            "floor": {
+                                "name": "floor",
+                                "confirmationStatus": "NONE"
+                            },
+                            "floorSide": {
+                                "name": "floorSide",
                                 "confirmationStatus": "NONE"
                             }
                         }
