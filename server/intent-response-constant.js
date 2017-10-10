@@ -73,17 +73,51 @@ module.exports = {
             "directives": [
                 {
                     "type": "Dialog.ElicitSlot",
-                    "slotToElicit": "AcActions",
+                    "slotToElicit": "actionOnDevice",
                     "updatedIntent": {
-                        "name": "actionOnEvents",
+                        "name": "ActionOnEventIntent",
                         "confirmationStatus": "NONE",
                         "slots": {
-                            "AcActions": {
-                                "name": "AcActions",
+                            "actionOnDevice": {
+                                "name": "actionOnDevice",
                                 "confirmationStatus": "NONE"
                             },
                             "confrenceRoom": {
                                 "name": "confrenceRoom",
+                                "confirmationStatus": "NONE"
+                            },
+                            "device": {
+                                "name": "device",
+                                "confirmationStatus": "NONE"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    delegate:  {
+        "version": "1.0",
+        "sessionAttributes": {},
+        "response": {
+            "shouldEndSession": false,
+            "directives": [
+                {
+                    "type": "Dialog.Delegate",
+                    "updatedIntent": {
+                        "name": "ActionOnEventIntent",
+                        "confirmationStatus": "NONE",
+                        "slots": {
+                            "actionOnDevice": {
+                                "name": "actionOnDevice",
+                                "confirmationStatus": "NONE"
+                            },
+                            "confrenceRoom": {
+                                "name": "confrenceRoom",
+                                "confirmationStatus": "NONE"
+                            },
+                            "device": {
+                                "name": "device",
                                 "confirmationStatus": "NONE"
                             }
                         }

@@ -14,7 +14,24 @@ function setSocket(socket) {
 }
 
 function intentRequestHandler(req, res) {
-    const intent = req.body.request ? getIntend(req.body.request) : '';
+    const intent = req.body.request ? getIntend(req.body.request) : '',
+        isLaunchRequest = req.body.request.type === 'LaunchRequest',
+        isSessionEndedRequest = req.body.request.type === 'SessionEndedRequest';
+
+
+    if (isLaunchRequest) {
+        var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To SmartFacilities, How can help you ?';
+        RESPONSE_LAUNCH_REQ.shouldEndSession = false;
+
+        res.send(RESPONSE_LAUNCH_REQ);
+    } else if (isSessionEndedRequest) {
+        var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
+        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Thank You..!';
+        RESPONSE_LAUNCH_REQ.shouldEndSession = true;
+
+        res.send(RESPONSE_LAUNCH_REQ);
+    }
 
     if (intent === 'CreateTicketIntend') {
         INTENT_RESPONSE.SIMPLE_JSON_RESPONSE.response.outputSpeech.text = 'Let me create ticket for you';
@@ -53,7 +70,7 @@ function intentRequestHandler(req, res) {
                 console.log(err);
             }
         });
-    } else if (intent === 'actionOnEvents') {
+    } else if (intent === 'ActionOnEventIntent') {
         var intentSolts = req.body.request.intent.slots;
 
         if (req.body.request.intent.confirmationStatus === 'CONFIRMED') {
@@ -68,32 +85,36 @@ function intentRequestHandler(req, res) {
             });
 
             var RESPONSE_FINAL = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
-            RESPONSE_FINAL.response.outputSpeech.text = "I will " + intentSolts.AcActions.value + " for you " + intentSolts.confrenceRoom.value + ".";
+            RESPONSE_FINAL.response.outputSpeech.text = "I will " + intentSolts.actionOnDevice.value + " " + intentSolts.device.value + " for you from" + intentSolts.confrenceRoom.value + ".";
             res.send(RESPONSE_FINAL);
         } else {
+            var RESPONSE_DELEGATE_DEVICE = JSON.parse(JSON.stringify(INTENT_RESPONSE.delegate));
+            if (intentSolts.actionOnDevice.value) {
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.actionOnDevice.value = intentSolts.actionOnDevice.value;
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.actionOnDevice.confirmationStatus = 'CONFIRMED';
+            }
+
+            if (intentSolts.device.value) {
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.device.value = intentSolts.device.value;
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.device.confirmationStatus = 'CONFIRMED';
+            }
+
             if (intentSolts.confrenceRoom.value) {
-                var RESPONSE = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
 
-                RESPONSE.response.directives[0].type = 'Dialog.ConfirmIntent';
-                RESPONSE.response.outputSpeech.text = "You want to " + intentSolts.AcActions.value + " " + intentSolts.confrenceRoom.value + " ?";
+                RESPONSE_DELEGATE_DEVICE.response.directives[0].type = 'Dialog.ConfirmIntent';
+                RESPONSE_DELEGATE_DEVICE.response.outputSpeech = {
+                    "type": "PlainText"
+                };
 
-                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.confirmationStatus = 'CONFIRMED';
-                RESPONSE.response.directives[0].updatedIntent.slots.confrenceRoom.value = intentSolts.confrenceRoom.value;
-                RESPONSE.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
-                RESPONSE.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
+                RESPONSE_DELEGATE_DEVICE.response.outputSpeech.text = "You want to " + intentSolts.actionOnDevice.value + " " + intentSolts.device.value + " " + intentSolts.confrenceRoom.value + " ?";
+            }
 
-                res.send(RESPONSE);
-            } else if (intentSolts.AcActions.value) {
-                var RESPONSE_CONF_ROOM = JSON.parse(JSON.stringify(INTENT_RESPONSE.test));
-
-                RESPONSE_CONF_ROOM.response.directives[0].slotToElicit = 'confrenceRoom';
-                RESPONSE_CONF_ROOM.response.outputSpeech.text = "from which conference Room?";
-
-                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.value = intentSolts.AcActions.value;
-                RESPONSE_CONF_ROOM.response.directives[0].updatedIntent.slots.AcActions.confirmationStatus = 'CONFIRMED';
-                res.send(RESPONSE_CONF_ROOM);
-            } else {
-                res.send(INTENT_RESPONSE.test);
+            try {
+                res.send(RESPONSE_DELEGATE_DEVICE);
+            } catch (err) {
+                console.log(err);
             }
         }
     } else if (intent === 'ListEvents') {
