@@ -67,7 +67,7 @@ function intentRequestHandler(req, res) {
 
             DeviceNotWorking_FINAL.response.shouldEndSession = false;
 
-            var incidentTitle = deviceNotWorkingIntentSlots.device.value + "Not Working On" + deviceNotWorkingIntentSlots.floor.value +
+            var incidentTitle = deviceNotWorkingIntentSlots.device.value + " Not Working On " + deviceNotWorkingIntentSlots.floor.value + " " +
                 deviceNotWorkingIntentSlots.floorSide.value;
 
             DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " + incidentTitle;
