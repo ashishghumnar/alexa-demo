@@ -67,9 +67,10 @@ function intentRequestHandler(req, res) {
 
             DeviceNotWorking_FINAL.response.shouldEndSession = false;
 
-            DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " +
-                deviceNotWorkingIntentSlots.device.value + " " + deviceNotWorkingIntentSlots.floor.value +
+            var incidentTitle = deviceNotWorkingIntentSlots.device.value + "Not Working On" + deviceNotWorkingIntentSlots.floor.value +
                 deviceNotWorkingIntentSlots.floorSide.value;
+
+            DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " + incidentTitle;
 
             try {
                 res.send(DeviceNotWorking_FINAL);
@@ -93,10 +94,14 @@ function intentRequestHandler(req, res) {
             DEVICE_NOT_WORKING_RESP.response.directives[0].updatedIntent.slots.floorSide.confirmationStatus = 'CONFIRMED';
         }
 
-        socketHolder.emit('createTicket', {data: ''});
+        socketHolder.emit('createTicket', {
+            data: {
+                ticketTitle: incidentTitle
+            }
+        });
 
         socketHolder.on('ticketCreated', function () {
-
+            console.log('created ticket');
         });
 
         try {
