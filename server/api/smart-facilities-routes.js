@@ -22,7 +22,7 @@ function intentRequestHandler(req, res) {
     if (isLaunchRequest) {
         var RESPONSE_LAUNCH_REQ = JSON.parse(JSON.stringify(INTENT_RESPONSE.SIMPLE_JSON_RESPONSE));
 
-        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To Smart Office, How can help you ?';
+        RESPONSE_LAUNCH_REQ.response.outputSpeech.text = 'Welcome To Smart Office, How can I help you ?';
 
         RESPONSE_LAUNCH_REQ.response.reprompt = {
             "outputSpeech": {
@@ -67,7 +67,7 @@ function intentRequestHandler(req, res) {
 
             DeviceNotWorking_FINAL.response.shouldEndSession = false;
 
-            var incidentTitle = deviceNotWorkingIntentSlots.device.value + " Not Working On " + deviceNotWorkingIntentSlots.floor.value + " " +
+            var incidentTitle = deviceNotWorkingIntentSlots.device.value + " not working on " + deviceNotWorkingIntentSlots.floor.value + " " +
                 deviceNotWorkingIntentSlots.floorSide.value;
 
             DeviceNotWorking_FINAL.response.outputSpeech.text = "I have created ticket for " + incidentTitle;
@@ -116,6 +116,7 @@ function intentRequestHandler(req, res) {
             var actionOnEvent = {
                 action: ''
             };
+
             if (/off/.test(intentSolts.actionOnDevice.value)) {
                 actionOnEvent.action = 'off';
 
